@@ -4,28 +4,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Viva Chatbot</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 20px;
-            text-align: center;
-        }
-        h1 {
-            color: #2c3e50;
-        }
-        .message {
-            color: #27ae60;
-            font-size: 1.2em;
-            margin-top: 30px;
-        }
-    </style>
+    <title>PrepPal - AI Exam Preparation</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <h1>AI Viva Chatbot</h1>
-    <p>A professional AI-powered viva preparation tool</p>
-    <div class="message">Project setup completed successfully.</div>
+    <!-- HUD Corner Decorations -->
+    <div class="hud-corner hud-corner-tl"></div>
+    <div class="hud-corner hud-corner-tr"></div>
+    <div class="hud-corner hud-corner-bl"></div>
+    <div class="hud-corner hud-corner-br"></div>
+    
+    <!-- PREPPAL Heading -->
+    <h1 class="heading">PREPPAL</h1>
+
+    <!-- Welcome Text (First Visit Only) -->
+    <p class="welcome-text" id="welcome-text">Welcome, Future Hero.</p>
+
+    <!-- Tagline -->
+    <p class="tagline" id="tagline">Train Like a Hero. Prepare Like a Pro.</p>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Action Section (Cards + Button) -->
+        <div class="action-section" id="action-section">
+            <!-- Topic Input Card -->
+            <div class="geometric-card">
+                <label class="input-label">Enter Exam Topic</label>
+                <div class="topic-input-wrapper">
+                    <span class="topic-icon">📝</span>
+                    <input 
+                        type="text" 
+                        class="topic-input" 
+                        placeholder="e.g. Data Structures, Organic Chemistry, Calculus II"
+                    >
+                </div>
+            </div>
+
+            <!-- Divider -->
+            <div class="divider" id="divider">
+                <span>OR</span>
+            </div>
+
+            <!-- Upload PDF Card -->
+            <div class="geometric-card upload-card" id="upload-card">
+                <div class="upload-icon-wrapper">
+                    <span class="upload-icon">📄</span>
+                </div>
+                <div class="upload-text">
+                    <div class="upload-title">Upload PDF</div>
+                    <div class="upload-subtitle">Drop your study material here or click to browse</div>
+                </div>
+                <div class="drop-zone">
+                    <span class="drop-zone-icon">☁️</span>
+                </div>
+            </div>
+
+            <!-- Start Prep Button -->
+            <button class="start-btn" id="start-btn">
+                <span class="btn-icon">⚡</span>
+                Start Prep
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        © 2026 PrepPal | Version 1.0
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>
