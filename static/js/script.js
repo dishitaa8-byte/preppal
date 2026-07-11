@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', () => {
     // Check if it's the user's first visit
     const isFirstVisit = localStorage.getItem('preppal_first_visit') === null;
@@ -8,6 +7,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const tagline = document.getElementById('tagline');
     const divider = document.getElementById('divider');
     const actionSection = document.getElementById('action-section');
+    const attachBtn = document.getElementById('attach-btn');
+    const fileInput = document.getElementById('file-input');
+    const topicInput = document.getElementById('topic-input');
+    const fileDisplay = document.getElementById('file-display');
+    const fileName = document.getElementById('file-name');
+    const removeFileBtn = document.getElementById('remove-file-btn');
+    const startBtn = document.getElementById('start-btn');
 
     if (isFirstVisit) {
         // First visit: play the intro animation
@@ -19,19 +25,34 @@ document.addEventListener('DOMContentLoaded', () => {
         showAllElements(welcomeText, tagline, divider, actionSection);
     }
 
-    // Upload card click handler (placeholder for future functionality)
-    const uploadCard = document.getElementById('upload-card');
-    if (uploadCard) {
-        uploadCard.addEventListener('click', () => {
-            console.log('Upload card clicked - file upload will be added later');
+    // Attach button click handler
+    if (attachBtn && fileInput) {
+        attachBtn.addEventListener('click', () => {
+            fileInput.click();
         });
     }
 
-    // Start prep button click handler (placeholder for future functionality)
-    const startBtn = document.getElementById('start-btn');
+    // File input change handler
+    if (fileInput) {
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                handleFileSelect(file);
+            }
+        });
+    }
+
+    // Remove file button handler
+    if (removeFileBtn) {
+        removeFileBtn.addEventListener('click', () => {
+            handleFileRemove();
+        });
+    }
+
+    // Start Prep button click handler (placeholder for future functionality)
     if (startBtn) {
         startBtn.addEventListener('click', () => {
-            console.log('Start Prep button clicked - question generation will be added later');
+            console.log('Start Prep button clicked - will be implemented later');
         });
     }
 });
@@ -89,5 +110,38 @@ function showAllElements(welcomeText, tagline, divider, actionSection) {
     }
     if (actionSection) {
         actionSection.classList.add('visible');
+    }
+}
+
+/**
+ * Handles file selection
+ * @param {File} file - Selected PDF file
+ */
+function handleFileSelect(file) {
+    const topicInput = document.getElementById('topic-input');
+    const fileDisplay = document.getElementById('file-display');
+    const fileName = document.getElementById('file-name');
+
+    if (topicInput && fileDisplay && fileName) {
+        fileName.textContent = file.name;
+        fileDisplay.style.display = 'flex';
+        topicInput.disabled = true;
+        topicInput.value = '';
+    }
+}
+
+/**
+ * Handles file removal
+ */
+function handleFileRemove() {
+    const fileInput = document.getElementById('file-input');
+    const topicInput = document.getElementById('topic-input');
+    const fileDisplay = document.getElementById('file-display');
+
+    if (fileInput && topicInput && fileDisplay) {
+        fileInput.value = '';
+        fileDisplay.style.display = 'none';
+        topicInput.disabled = false;
+        topicInput.focus();
     }
 }

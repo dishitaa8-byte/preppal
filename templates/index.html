@@ -26,45 +26,37 @@
     <!-- Main Container -->
     <div class="container">
         <!-- Action Section (Cards + Button) -->
-        <div class="action-section" id="action-section">
-            <!-- Topic Input Card -->
-            <div class="geometric-card">
-                <label class="input-label">Enter Exam Topic</label>
-                <div class="topic-input-wrapper">
-                    <span class="topic-icon">📝</span>
-                    <input 
-                        type="text" 
-                        class="topic-input" 
-                        placeholder="e.g. Data Structures, Organic Chemistry, Calculus II"
-                    >
-                </div>
+    <div class="action-section" id="action-section">
+        <!-- Combined Input Card -->
+        <div class="geometric-card">
+            <div class="combined-input-wrapper">
+                <span class="input-icon">📝</span>
+                <input 
+                    type="text" 
+                    class="combined-topic-input" 
+                    id="topic-input"
+                    placeholder="Enter a topic or attach a PDF..."
+                >
+                <!-- Hidden File Input -->
+                <input type="file" id="file-input" accept=".pdf" style="display: none;">
+                <!-- Attachment Button -->
+                <button class="attach-btn" id="attach-btn" title="Attach PDF">
+                    📎
+                </button>
             </div>
-
-            <!-- Divider -->
-            <div class="divider" id="divider">
-                <span>OR</span>
+            <!-- File Display (Hidden by default) -->
+            <div class="file-display" id="file-display" style="display: none;">
+                <span class="file-name" id="file-name"></span>
+                <button class="remove-file-btn" id="remove-file-btn" title="Remove file">✕</button>
             </div>
-
-            <!-- Upload PDF Card -->
-            <div class="geometric-card upload-card" id="upload-card">
-                <div class="upload-icon-wrapper">
-                    <span class="upload-icon">📄</span>
-                </div>
-                <div class="upload-text">
-                    <div class="upload-title">Upload PDF</div>
-                    <div class="upload-subtitle">Drop your study material here or click to browse</div>
-                </div>
-                <div class="drop-zone">
-                    <span class="drop-zone-icon">☁️</span>
-                </div>
-            </div>
-
-            <!-- Start Prep Button -->
-            <button class="start-btn" id="start-btn">
-                <span class="btn-icon">⚡</span>
-                Start Prep
-            </button>
         </div>
+
+        <!-- Start Prep Button -->
+        <button class="start-btn" id="start-btn">
+            <span class="btn-icon">⚡</span>
+            Start Prep
+        </button>
+    </div>
     </div>
 
     <!-- Footer -->
