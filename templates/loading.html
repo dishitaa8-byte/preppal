@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrepPal - Preparing Session</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="loading-page">
+    <div class="hud-corner hud-corner-tl"></div>
+    <div class="hud-corner hud-corner-tr"></div>
+    <div class="hud-corner hud-corner-bl"></div>
+    <div class="hud-corner hud-corner-br"></div>
+
+    <div class="loading-screen">
+        <div class="loading-message-container">
+            <p class="loading-message" id="loading-message">Reporting to Hero Training Center...</p>
+        </div>
+        <div class="spinner"></div>
+    </div>
+
+    <script>
+        const SESSION_ID = "{{ session_id }}";
+    </script>
+    <script src="{{ url_for('static', filename='js/loading.js') }}"></script>
+</body>
+</html>

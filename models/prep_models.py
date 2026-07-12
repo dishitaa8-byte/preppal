@@ -30,9 +30,13 @@ class PrepSession:
     topic: Optional[str] = None
     pdf_filename: Optional[str] = None
     pdf_path: Optional[str] = None
+    pdf_text: Optional[str] = None
     questions: List[Question] = field(default_factory=list)
     answers: List[Answer] = field(default_factory=list)
     current_question_index: int = 0
     is_complete: bool = False
+    generation_status: str = "pending"  # pending | generating | ready | failed
+    generation_error: Optional[str] = None
+    num_questions: int = 5
     started_at: datetime = field(default_factory=datetime.now)
     completed_at: Optional[datetime] = None

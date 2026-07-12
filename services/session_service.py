@@ -12,7 +12,13 @@ class SessionService:
         # In a real app, this would be a database
         self.sessions: Dict[str, PrepSession] = {}
     
-    def create_session(self, topic: Optional[str] = None, pdf_filename: Optional[str] = None, pdf_path: Optional[str] = None) -> PrepSession:
+    def create_session(
+        self,
+        topic: Optional[str] = None,
+        pdf_filename: Optional[str] = None,
+        pdf_path: Optional[str] = None,
+        num_questions: int = 5
+    ) -> PrepSession:
         """
         Create a new preparation session.
         
@@ -29,7 +35,8 @@ class SessionService:
             id=session_id,
             topic=topic,
             pdf_filename=pdf_filename,
-            pdf_path=pdf_path
+            pdf_path=pdf_path,
+            num_questions=num_questions
         )
         self.sessions[session_id] = session
         return session
@@ -157,3 +164,22 @@ class SessionService:
             return None
         
         return self.get_current_question(session_id)
+
+    def set_generation_status(
+        self,
+        session_id: str,
+        status: str,
+        error: Optional[str] = None
+    ) -> Optional[PrepSession]:
+        """Update question generation status for a session."""
+        session = self.get_session(session_id)
+        if not session:
+            return None
+        session.generation_status = status
+        session.generation_error = error
+        return session
+
+    def is_questions_ready(self, session_id: str) -> bool:
+        """Check whether questions have been generated for a session."""
+        session = self.get_session(session_id)
+        return session is not None and session.generation_status == "ready"

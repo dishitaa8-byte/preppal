@@ -49,11 +49,57 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Start Prep button click handler (placeholder for future functionality)
+    // Start Prep button click handler
     if (startBtn) {
-        startBtn.addEventListener('click', () => {
-            console.log('Start Prep button clicked - will be implemented later');
+        startBtn.addEventListener('click', async () => {
+            await startSession();
         });
+    }
+    
+    // Start session function
+    async function startSession() {
+        const topicInput = document.getElementById('topic-input');
+        const fileInput = document.getElementById('file-input');
+        
+        // Show loading state on button
+        startBtn.disabled = true;
+        startBtn.innerHTML = '<span class="btn-icon">⚡</span> Starting...';
+        
+        try {
+            const formData = new FormData();
+            
+            // Add topic
+            if (topicInput && topicInput.value.trim()) {
+                formData.append('topic', topicInput.value.trim());
+            }
+            
+            // Add file
+            if (fileInput && fileInput.files.length > 0) {
+                formData.append('pdf', fileInput.files[0]);
+            }
+            
+            const response = await fetch('/api/start', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (data.error) {
+                alert(data.error);
+                return;
+            }
+            
+            // Redirect to loading page (questions generated there)
+            window.location.href = `/prep/${data.session_id}/loading`;
+        } catch (error) {
+            console.error('Error starting session:', error);
+            alert('Failed to start session');
+        } finally {
+            // Re-enable button
+            startBtn.disabled = false;
+            startBtn.innerHTML = '<span class="btn-icon">⚡</span> Start Prep';
+        }
     }
 });
 

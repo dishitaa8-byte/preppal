@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrepPal - Viva Session</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- HUD Corner Decorations -->
+    <div class="hud-corner hud-corner-tl"></div>
+    <div class="hud-corner hud-corner-tr"></div>
+    <div class="hud-corner hud-corner-bl"></div>
+    <div class="hud-corner hud-corner-br"></div>
+    
+    <!-- Main Container -->
+    <div class="container" id="prep-container">
+        <!-- Progress -->
+        <div class="progress-bar-container">
+            <div class="progress-text" id="progress-text">Question 1 of 5</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+        
+        <!-- Question Card -->
+        <div class="geometric-card question-card" id="question-card">
+            <div class="question-text" id="question-text">Loading question...</div>
+        </div>
+        
+        <!-- Answer Card -->
+        <div class="geometric-card answer-card" id="answer-card">
+            <label class="input-label">Your Answer</label>
+            <textarea id="answer-input" class="answer-input" placeholder="Type your answer here..." disabled"></textarea>
+        </div>
+        
+        <!-- Action Buttons -->
+        <button class="start-btn" id="submit-btn">
+            <span class="btn-icon">✓</span> Submit Answer
+        </button>
+        
+        <!-- Result Section (Initially Hidden) -->
+        <div class="result-section" id="result-section" style="display: none;">
+            <div class="geometric-card">
+                <div class="rating-display" id="rating-display"></div>
+                <div class="ideal-answer">
+                    <label class="input-label">Ideal Answer</label>
+                    <div class="ideal-answer-text" id="ideal-answer-text"></div>
+                </div>
+            </div>
+            <button class="start-btn" id="next-btn">
+                <span class="btn-icon">→</span> Next Question
+            </button>
+        </div>
+        
+        <!-- Complete Section (Initially Hidden) -->
+        <div class="complete-section" id="complete-section" style="display: none;">
+            <div class="geometric-card">
+                <h2 class="complete-title">Session Complete!</h2>
+                <p class="complete-text">Great job! You've completed all the viva questions.</p>
+            </div>
+            <a href="/" class="start-btn">
+                <span class="btn-icon">🏠</span> Back to Home
+            </a>
+        </div>
+    </div>
+
+    <!-- Hidden Input (for errors/loading) -->
+    <div class="loading" id="loading" style="display: none;">
+        <div class="spinner"></div>
+        <div class="loading-text">Loading...</div>
+    </div>
+    
+    <script>
+        // Pass session_id to JS
+        const SESSION_ID = "{{ session_id }}";
+    </script>
+    <script src="{{ url_for('static', filename='js/prep.js') }}"></script>
+</body>
+</html>

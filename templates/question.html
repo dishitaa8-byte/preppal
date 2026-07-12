@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrepPal - Viva Question</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="hud-corner hud-corner-tl"></div>
+    <div class="hud-corner hud-corner-tr"></div>
+    <div class="hud-corner hud-corner-bl"></div>
+    <div class="hud-corner hud-corner-br"></div>
+
+    <div class="container" id="question-container">
+        <div class="progress-bar-container">
+            <div class="progress-text" id="progress-text">Question 1 of 5</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+
+        <div class="geometric-card question-card" id="question-card">
+            <div class="question-text" id="question-text">Loading question...</div>
+        </div>
+
+        <div class="geometric-card answer-card" id="answer-card">
+            <label class="input-label" for="answer-input">Your Answer</label>
+            <textarea
+                id="answer-input"
+                class="answer-input"
+                placeholder="Type your answer here..."
+                disabled
+            ></textarea>
+            <div class="char-counter" id="char-counter">0 characters</div>
+        </div>
+
+        <button class="start-btn" id="submit-btn" disabled>
+            <span class="btn-icon">✓</span> Submit Answer
+        </button>
+
+        <div class="submitted-notice" id="submitted-notice" style="display: none;">
+            <div class="geometric-card">
+                <p class="submitted-text">Answer submitted successfully. Evaluation results coming soon.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="loading" id="loading" style="display: none;">
+        <div class="spinner"></div>
+        <div class="loading-text" id="loading-text">Evaluating your answer...</div>
+    </div>
+
+    <script>
+        const SESSION_ID = "{{ session_id }}";
+    </script>
+    <script src="{{ url_for('static', filename='js/question.js') }}"></script>
+</body>
+</html>
