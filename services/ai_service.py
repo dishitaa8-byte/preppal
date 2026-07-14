@@ -8,7 +8,7 @@ from services.prompt_service import PromptService
 class AIService:
     """Service class for AI-related operations (LLM calls via NVIDIA API)."""
     
-    def __init__(self, api_key: Optional[str] = None, base_url: Optional[str] = None, model: str = "meta/llama-3.1-405b-instruct"):
+    def __init__(self, api_key: Optional[str] = None, base_url: Optional[str] = None, model: str = "meta/llama-3.1-70b-instruct"):
         """
         Initialize AI service.
         
