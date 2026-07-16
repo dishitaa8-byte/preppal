@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrepPal - Session Summary</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="hud-corner hud-corner-tl"></div>
+    <div class="hud-corner hud-corner-tr"></div>
+    <div class="hud-corner hud-corner-bl"></div>
+    <div class="hud-corner hud-corner-br"></div>
+
+    <div class="container" id="summary-container">
+        <h1 class="heading">SESSION COMPLETE</h1>
+        
+        <!-- Performance Summary Card -->
+        <div class="geometric-card summary-card" id="summary-card">
+            <div class="summary-header">
+                <p class="performance-message" id="performance-message">Loading...</p>
+                <p class="topic-display" id="topic-display">Topic: Loading...</p>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value" id="questions-attempted">0</div>
+                    <div class="stat-label">Questions Attempted</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="completion-percentage">0%</div>
+                    <div class="stat-label">Completion</div>
+                </div>
+            </div>
+
+            <div class="evaluation-stats">
+                <div class="eval-stat best">
+                    <div class="eval-count" id="best-count">0</div>
+                    <div class="eval-label">Best</div>
+                </div>
+                <div class="eval-stat better">
+                    <div class="eval-count" id="better-count">0</div>
+                    <div class="eval-label">Better</div>
+                </div>
+                <div class="eval-stat good">
+                    <div class="eval-count" id="good-count">0</div>
+                    <div class="eval-label">Good</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Questions Review Section -->
+        <h2 class="section-heading">Question Review</h2>
+        <div class="questions-review" id="questions-review">
+            <div class="loading-spinner">
+                <div class="spinner"></div>
+                <p>Loading review...</p>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="start-btn" id="new-session-btn">
+                <span class="btn-icon">⚡</span> Start New Session
+            </button>
+            <button class="secondary-btn" id="home-btn">
+                <span class="btn-icon">🏠</span> Back to Home
+            </button>
+        </div>
+    </div>
+
+    <div class="loading" id="loading" style="display: none;">
+        <div class="spinner"></div>
+        <div class="loading-text" id="loading-text">Loading...</div>
+    </div>
+
+    <script>
+        const SESSION_ID = "{{ session_id }}";
+    </script>
+    <script src="{{ url_for('static', filename='js/summary.js') }}"></script>
+</body>
+</html>

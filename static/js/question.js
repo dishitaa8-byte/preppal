@@ -66,7 +66,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            showSubmittedState();
+            // Move to next question
+            const nextResponse = await fetch(`/api/session/${sessionId}/next`, {
+                method: 'POST'
+            });
+            const nextData = await nextResponse.json();
+
+            if (nextData.error) {
+                alert(nextData.error);
+                submitBtn.disabled = false;
+                return;
+            }
+
+            if (nextData.is_complete) {
+                window.location.href = `/prep/${sessionId}/summary`;
+            } else {
+                loadQuestion();
+            }
         } catch (error) {
             console.error('Error submitting answer:', error);
             alert('Failed to submit answer');

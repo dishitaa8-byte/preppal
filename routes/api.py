@@ -151,3 +151,75 @@ def next_question(session_id: str):
 
     except Exception as e:
         return jsonify({"error": f"Failed to move to next question: {str(e)}"}), 500
+
+
+@api_bp.route("/session/<session_id>/summary", methods=["GET"])
+def get_session_summary(session_id: str):
+    """Get summary data for a completed session."""
+    try:
+        prep_session = current_app.session_service.get_session(session_id)
+        if not prep_session:
+            return jsonify({"error": "Session not found"}), 404
+
+        # Count evaluations
+        good_count = 0
+        better_count = 0
+        best_count = 0
+        
+        for answer in prep_session.answers:
+            if answer.evaluation == "Good":
+                good_count += 1
+            elif answer.evaluation == "Better":
+                better_count += 1
+            elif answer.evaluation == "Best":
+                best_count += 1
+        
+        # Calculate completion percentage
+        total_questions = len(prep_session.questions)
+        answered_questions = len(prep_session.answers)
+        completion_percentage = (answered_questions / total_questions * 100) if total_questions > 0 else 0
+        
+        # Generate overall performance message
+        if best_count >= answered_questions * 0.8:
+            performance_message = "Excellent work."
+        elif best_count + better_count >= answered_questions * 0.7:
+            performance_message = "Great job."
+        elif best_count + better_count + good_count >= answered_questions * 0.5:
+            performance_message = "Good effort."
+        else:
+            performance_message = "Keep practicing."
+        
+        # Build question review data
+        questions_review = []
+        for i, question in enumerate(prep_session.questions):
+            # Find the answer for this question
+            user_answer = None
+            evaluation = None
+            for answer in prep_session.answers:
+                if answer.question_id == question.id:
+                    user_answer = answer.user_answer
+                    evaluation = answer.evaluation
+                    break
+            
+            questions_review.append({
+                "index": i + 1,
+                "question": question.text,
+                "user_answer": user_answer,
+                "ideal_answer": question.ideal_answer,
+                "evaluation": evaluation
+            })
+
+        return jsonify({
+            "topic": prep_session.topic or "PDF-based session",
+            "questions_attempted": answered_questions,
+            "total_questions": total_questions,
+            "good_count": good_count,
+            "better_count": better_count,
+            "best_count": best_count,
+            "completion_percentage": completion_percentage,
+            "performance_message": performance_message,
+            "questions_review": questions_review
+        }), 200
+
+    except Exception as e:
+        return jsonify({"error": f"Failed to get session summary: {str(e)}"}), 500
