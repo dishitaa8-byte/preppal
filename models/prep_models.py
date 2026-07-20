@@ -10,6 +10,9 @@ class Question:
     id: str
     text: str
     ideal_answer: str
+    options: Optional[List[str]] = None  # For MCQ mode
+    correct_answer: Optional[str] = None  # For MCQ mode
+    explanation: Optional[str] = None  # For MCQ mode
     created_at: datetime = field(default_factory=datetime.now)
 
 
@@ -20,6 +23,7 @@ class Answer:
     question_id: str
     user_answer: str
     evaluation: Optional[str] = None  # e.g., "Good", "Better", "Best"
+    is_correct: Optional[bool] = None  # For MCQ mode
     created_at: datetime = field(default_factory=datetime.now)
 
 
@@ -31,6 +35,7 @@ class PrepSession:
     pdf_filename: Optional[str] = None
     pdf_path: Optional[str] = None
     pdf_text: Optional[str] = None
+    mode: str = "written"  # "written" or "mcq"
     questions: List[Question] = field(default_factory=list)
     answers: List[Answer] = field(default_factory=list)
     current_question_index: int = 0

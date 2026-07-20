@@ -22,7 +22,8 @@
                 <p class="topic-display" id="topic-display">Topic: Loading...</p>
             </div>
             
-            <div class="stats-grid">
+            <!-- Written Mode Stats -->
+            <div class="stats-grid" id="written-stats">
                 <div class="stat-item">
                     <div class="stat-value" id="questions-attempted">0</div>
                     <div class="stat-label">Questions Attempted</div>
@@ -33,7 +34,7 @@
                 </div>
             </div>
 
-            <div class="evaluation-stats">
+            <div class="evaluation-stats" id="written-eval-stats">
                 <div class="eval-stat best">
                     <div class="eval-count" id="best-count">0</div>
                     <div class="eval-label">Best</div>
@@ -45,6 +46,26 @@
                 <div class="eval-stat good">
                     <div class="eval-count" id="good-count">0</div>
                     <div class="eval-label">Good</div>
+                </div>
+            </div>
+
+            <!-- MCQ Mode Stats -->
+            <div class="stats-grid" id="mcq-stats" style="display: none;">
+                <div class="stat-item">
+                    <div class="stat-value" id="correct-count">0</div>
+                    <div class="stat-label">Correct</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="incorrect-count">0</div>
+                    <div class="stat-label">Incorrect</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="accuracy-percentage">0%</div>
+                    <div class="stat-label">Accuracy</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="mcq-questions-attempted">0</div>
+                    <div class="stat-label">Questions</div>
                 </div>
             </div>
         </div>

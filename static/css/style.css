@@ -572,6 +572,75 @@ body::after {
     background: rgba(46, 204, 113, 0.15);
 }
 
+/* Mode Selection Card */
+.mode-selection-card {
+    margin-bottom: 20px;
+}
+
+.mode-options {
+    display: flex;
+    gap: 20px;
+}
+
+.mode-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    padding: 12px 20px;
+    background: rgba(8, 12, 18, 0.5);
+    border: 1px solid rgba(46, 204, 113, 0.2);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    flex: 1;
+}
+
+.mode-option:hover {
+    border-color: rgba(46, 204, 113, 0.4);
+    background: rgba(8, 12, 18, 0.7);
+}
+
+.mode-option input[type="radio"] {
+    display: none;
+}
+
+.mode-radio {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(46, 204, 113, 0.4);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.mode-option input[type="radio"]:checked + .mode-radio {
+    border-color: var(--primary-accent);
+    box-shadow: 0 0 10px rgba(46, 204, 113, 0.3);
+}
+
+.mode-option input[type="radio"]:checked + .mode-radio::after {
+    content: '';
+    width: 10px;
+    height: 10px;
+    background: var(--primary-accent);
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
+}
+
+.mode-text {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-color);
+    letter-spacing: 1px;
+}
+
+.mode-option input[type="radio"]:checked ~ .mode-text {
+    color: var(--primary-accent);
+    text-shadow: 0 0 10px rgba(46, 204, 113, 0.3);
+}
+
 /* Upload Card */
 .upload-card {
     display: flex;
@@ -1123,6 +1192,81 @@ body::after {
     text-shadow: 0 0 15px rgba(46, 204, 113, 0.3);
 }
 
+/* MCQ Card Styles */
+.mcq-card {
+    margin-bottom: 28px;
+}
+
+.mcq-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.mcq-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    background: rgba(8, 12, 18, 0.5);
+    border: 1px solid rgba(46, 204, 113, 0.2);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.mcq-option:hover {
+    border-color: rgba(46, 204, 113, 0.4);
+    background: rgba(8, 12, 18, 0.7);
+}
+
+.mcq-option.selected {
+    border-color: var(--primary-accent);
+    background: rgba(46, 204, 113, 0.1);
+    box-shadow: 0 0 15px rgba(46, 204, 113, 0.2);
+}
+
+.mcq-option input[type="radio"] {
+    display: none;
+}
+
+.mcq-radio {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(46, 204, 113, 0.4);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.mcq-option.selected .mcq-radio {
+    border-color: var(--primary-accent);
+    box-shadow: 0 0 10px rgba(46, 204, 113, 0.3);
+}
+
+.mcq-option.selected .mcq-radio::after {
+    content: '';
+    width: 10px;
+    height: 10px;
+    background: var(--primary-accent);
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
+}
+
+.mcq-option-text {
+    font-size: 15px;
+    color: var(--text-color);
+    line-height: 1.4;
+}
+
+.mcq-option.selected .mcq-option-text {
+    color: var(--primary-accent);
+    font-weight: 500;
+}
+
 /* ============================================
    Summary Page Styles
    ============================================ */
@@ -1314,6 +1458,20 @@ body::after {
     border: 1px solid rgba(245, 245, 245, 0.2);
 }
 
+.evaluation-badge.correct {
+    background: rgba(46, 204, 113, 0.2);
+    color: var(--primary-accent);
+    border: 1px solid rgba(46, 204, 113, 0.4);
+    box-shadow: 0 0 15px rgba(46, 204, 113, 0.2);
+}
+
+.evaluation-badge.incorrect {
+    background: rgba(231, 76, 60, 0.2);
+    color: #E74C3C;
+    border: 1px solid rgba(231, 76, 60, 0.4);
+    box-shadow: 0 0 15px rgba(231, 76, 60, 0.2);
+}
+
 .review-content {
     display: flex;
     flex-direction: column;
@@ -1349,6 +1507,51 @@ body::after {
 .review-text.ideal-answer {
     color: var(--primary-accent);
     font-weight: 500;
+}
+
+.review-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.review-option {
+    padding: 10px 14px;
+    background: rgba(8, 12, 18, 0.4);
+    border: 1px solid rgba(46, 204, 113, 0.15);
+    border-radius: 4px;
+    font-size: 14px;
+    color: rgba(245, 245, 245, 0.9);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.review-option.selected {
+    border-color: rgba(46, 204, 113, 0.4);
+    background: rgba(46, 204, 113, 0.1);
+}
+
+.review-option.correct {
+    border-color: var(--primary-accent);
+    background: rgba(46, 204, 113, 0.15);
+}
+
+.option-badge {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 4px 8px;
+    border-radius: 3px;
+    background: rgba(46, 204, 113, 0.2);
+    color: var(--primary-accent);
+}
+
+.option-badge.correct-badge {
+    background: rgba(46, 204, 113, 0.3);
+    box-shadow: 0 0 10px rgba(46, 204, 113, 0.3);
 }
 
 .action-buttons {

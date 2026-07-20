@@ -30,7 +30,7 @@ class AIService:
                 base_url=self.base_url
             )
     
-    def generate_questions(self, topic: Optional[str] = None, pdf_text: Optional[str] = None, num_questions: int = 5) -> List[Dict[str, str]]:
+    def generate_questions(self, topic: Optional[str] = None, pdf_text: Optional[str] = None, num_questions: int = 5, mode: str = "written") -> List[Dict[str, str]]:
         """
         Generate viva questions based on topic or PDF text using NVIDIA API.
         
@@ -38,9 +38,10 @@ class AIService:
             topic: Optional topic string
             pdf_text: Optional text extracted from PDF
             num_questions: Number of questions to generate
+            mode: "written" for descriptive questions or "mcq" for multiple choice
             
         Returns:
-            List of dictionaries with 'question' and 'ideal_answer' keys
+            List of dictionaries with question data
         """
         if not self.client:
             raise ValueError("NVIDIA API key not configured")
@@ -50,7 +51,8 @@ class AIService:
         user_prompt = self.prompt_service.get_question_generation_prompt(
             topic=topic,
             pdf_text=pdf_text,
-            num_questions=num_questions
+            num_questions=num_questions,
+            mode=mode
         )
         
         try:
@@ -84,12 +86,16 @@ class AIService:
                 elif not isinstance(questions_data, list):
                     raise ValueError("Invalid JSON format")
                 
-                # Validate each question has required fields
+                # Validate each question has required fields based on mode
                 valid_questions = []
                 for q in questions_data:
-                    if isinstance(q, dict) and "question" in q and "ideal_answer" in q:
-                        valid_questions.append(q)
-                    elif len(valid_questions) >= num_questions:
+                    if mode == "mcq":
+                        if isinstance(q, dict) and "question" in q and "options" in q and "correct_answer" in q and "explanation" in q:
+                            valid_questions.append(q)
+                    else:
+                        if isinstance(q, dict) and "question" in q and "ideal_answer" in q:
+                            valid_questions.append(q)
+                    if len(valid_questions) >= num_questions:
                         break
                 
                 return valid_questions[:num_questions]

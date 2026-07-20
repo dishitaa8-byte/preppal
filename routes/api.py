@@ -10,10 +10,16 @@ def start_session():
     try:
         topic = request.form.get("topic", "").strip()
         pdf_file = request.files.get("pdf") if "pdf" in request.files else None
+        mode = request.form.get("mode", "written")
+
+        # Set num_questions based on mode
+        num_questions = 10 if mode == "mcq" else 5
 
         prep_session, error = current_app.prep_service.start_session(
             topic=topic,
-            pdf_file=pdf_file
+            pdf_file=pdf_file,
+            num_questions=num_questions,
+            mode=mode
         )
 
         if error:
@@ -79,13 +85,20 @@ def get_current_question(session_id: str):
         if not question:
             return jsonify({"error": "No more questions"}), 404
 
+        question_data = {
+            "id": question.id,
+            "text": question.text,
+            "index": prep_session.current_question_index,
+            "total": len(prep_session.questions)
+        }
+
+        # Add MCQ-specific data if in MCQ mode
+        if prep_session.mode == "mcq" and question.options:
+            question_data["options"] = question.options
+
         return jsonify({
-            "question": {
-                "id": question.id,
-                "text": question.text,
-                "index": prep_session.current_question_index,
-                "total": len(prep_session.questions)
-            },
+            "question": question_data,
+            "mode": prep_session.mode,
             "is_complete": prep_session.is_complete
         }), 200
 
@@ -117,12 +130,19 @@ def submit_answer(session_id: str):
             user_answer=user_answer
         )
 
-        rating = current_app.evaluation_service.evaluate_answer(
-            question=question.text,
-            user_answer=user_answer,
-            ideal_answer=question.ideal_answer
-        )
-        current_app.session_service.update_answer_evaluation(session_id, answer.id, rating)
+        # Handle evaluation based on mode
+        if prep_session.mode == "mcq":
+            # For MCQ, compare with correct answer
+            is_correct = (user_answer == question.correct_answer)
+            current_app.session_service.update_answer_correctness(session_id, answer.id, is_correct)
+        else:
+            # For written mode, use AI evaluation
+            rating = current_app.evaluation_service.evaluate_answer(
+                question=question.text,
+                user_answer=user_answer,
+                ideal_answer=question.ideal_answer
+            )
+            current_app.session_service.update_answer_evaluation(session_id, answer.id, rating)
 
         return jsonify({
             "status": "success",
@@ -161,65 +181,120 @@ def get_session_summary(session_id: str):
         if not prep_session:
             return jsonify({"error": "Session not found"}), 404
 
-        # Count evaluations
-        good_count = 0
-        better_count = 0
-        best_count = 0
-        
-        for answer in prep_session.answers:
-            if answer.evaluation == "Good":
-                good_count += 1
-            elif answer.evaluation == "Better":
-                better_count += 1
-            elif answer.evaluation == "Best":
-                best_count += 1
-        
-        # Calculate completion percentage
+        mode = prep_session.mode
         total_questions = len(prep_session.questions)
         answered_questions = len(prep_session.answers)
         completion_percentage = (answered_questions / total_questions * 100) if total_questions > 0 else 0
-        
-        # Generate overall performance message
-        if best_count >= answered_questions * 0.8:
-            performance_message = "Excellent work."
-        elif best_count + better_count >= answered_questions * 0.7:
-            performance_message = "Great job."
-        elif best_count + better_count + good_count >= answered_questions * 0.5:
-            performance_message = "Good effort."
-        else:
-            performance_message = "Keep practicing."
-        
-        # Build question review data
-        questions_review = []
-        for i, question in enumerate(prep_session.questions):
-            # Find the answer for this question
-            user_answer = None
-            evaluation = None
-            for answer in prep_session.answers:
-                if answer.question_id == question.id:
-                    user_answer = answer.user_answer
-                    evaluation = answer.evaluation
-                    break
-            
-            questions_review.append({
-                "index": i + 1,
-                "question": question.text,
-                "user_answer": user_answer,
-                "ideal_answer": question.ideal_answer,
-                "evaluation": evaluation
-            })
 
-        return jsonify({
-            "topic": prep_session.topic or "PDF-based session",
-            "questions_attempted": answered_questions,
-            "total_questions": total_questions,
-            "good_count": good_count,
-            "better_count": better_count,
-            "best_count": best_count,
-            "completion_percentage": completion_percentage,
-            "performance_message": performance_message,
-            "questions_review": questions_review
-        }), 200
+        if mode == "mcq":
+            # MCQ mode summary
+            correct_count = 0
+            incorrect_count = 0
+            
+            for answer in prep_session.answers:
+                if answer.is_correct:
+                    correct_count += 1
+                else:
+                    incorrect_count += 1
+            
+            # Generate performance message based on accuracy
+            accuracy = (correct_count / answered_questions * 100) if answered_questions > 0 else 0
+            if accuracy >= 90:
+                performance_message = "Outstanding Hero!"
+            elif accuracy >= 75:
+                performance_message = "Excellent Work!"
+            elif accuracy >= 60:
+                performance_message = "Keep Training!"
+            else:
+                performance_message = "Needs More Practice!"
+            
+            # Build question review data for MCQ
+            questions_review = []
+            for i, question in enumerate(prep_session.questions):
+                user_answer = None
+                is_correct = None
+                for answer in prep_session.answers:
+                    if answer.question_id == question.id:
+                        user_answer = answer.user_answer
+                        is_correct = answer.is_correct
+                        break
+                
+                questions_review.append({
+                    "index": i + 1,
+                    "question": question.text,
+                    "options": question.options,
+                    "user_answer": user_answer,
+                    "correct_answer": question.correct_answer,
+                    "is_correct": is_correct,
+                    "explanation": question.explanation
+                })
+
+            return jsonify({
+                "mode": mode,
+                "topic": prep_session.topic or "PDF-based session",
+                "questions_attempted": answered_questions,
+                "total_questions": total_questions,
+                "correct_count": correct_count,
+                "incorrect_count": incorrect_count,
+                "accuracy_percentage": accuracy,
+                "performance_message": performance_message,
+                "questions_review": questions_review
+            }), 200
+        else:
+            # Written mode summary (existing logic)
+            good_count = 0
+            better_count = 0
+            best_count = 0
+            
+            for answer in prep_session.answers:
+                if answer.evaluation == "Good":
+                    good_count += 1
+                elif answer.evaluation == "Better":
+                    better_count += 1
+                elif answer.evaluation == "Best":
+                    best_count += 1
+            
+            # Generate overall performance message
+            if best_count >= answered_questions * 0.8:
+                performance_message = "Excellent work."
+            elif best_count + better_count >= answered_questions * 0.7:
+                performance_message = "Great job."
+            elif best_count + better_count + good_count >= answered_questions * 0.5:
+                performance_message = "Good effort."
+            else:
+                performance_message = "Keep practicing."
+            
+            # Build question review data
+            questions_review = []
+            for i, question in enumerate(prep_session.questions):
+                user_answer = None
+                evaluation = None
+                for answer in prep_session.answers:
+                    if answer.question_id == question.id:
+                        user_answer = answer.user_answer
+                        evaluation = answer.evaluation
+                        break
+                
+                questions_review.append({
+                    "index": i + 1,
+                    "question": question.text,
+                    "user_answer": user_answer,
+                    "ideal_answer": question.ideal_answer,
+                    "evaluation": evaluation
+                })
+
+            return jsonify({
+                "mode": mode,
+                "topic": prep_session.topic or "PDF-based session",
+                "questions_attempted": answered_questions,
+                "total_questions": total_questions,
+                "good_count": good_count,
+                "better_count": better_count,
+                "best_count": best_count,
+                "completion_percentage": completion_percentage,
+                "performance_message": performance_message,
+                "questions_review": questions_review
+            }), 200
 
     except Exception as e:
         return jsonify({"error": f"Failed to get session summary: {str(e)}"}), 500

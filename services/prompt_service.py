@@ -20,7 +20,7 @@ Your responsibilities:
 3. Provide concise, accurate ideal answers
 4. Always return structured, valid JSON"""
     
-    def get_question_generation_prompt(self, topic: Optional[str] = None, pdf_text: Optional[str] = None, num_questions: int = 5) -> str:
+    def get_question_generation_prompt(self, topic: Optional[str] = None, pdf_text: Optional[str] = None, num_questions: int = 5, mode: str = "written") -> str:
         """
         Generate a prompt for question generation with clear JSON schema.
         
@@ -28,6 +28,7 @@ Your responsibilities:
             topic: Optional topic string
             pdf_text: Optional text extracted from PDF
             num_questions: Number of questions to generate
+            mode: "written" for descriptive questions or "mcq" for multiple choice
             
         Returns:
             Formatted prompt string
@@ -40,7 +41,40 @@ Your responsibilities:
             truncated_text = pdf_text[:3500] + ("..." if len(pdf_text) > 3500 else "")
             context = f"CONTENT FROM PDF:\n{truncated_text}"
         
-        return f"""{context}
+        if mode == "mcq":
+            return f"""{context}
+
+INSTRUCTIONS:
+Generate exactly {num_questions} multiple-choice questions following these rules:
+1. Questions should test understanding of key concepts
+2. Each question must have exactly 4 options (A, B, C, D)
+3. Only one option is correct
+4. Options should be plausible but clearly distinguishable
+5. Provide a brief explanation for the correct answer
+6. Questions should gradually increase in difficulty
+7. No repeating questions or concepts
+8. Base all questions ONLY on the provided context above
+
+RESPONSE FORMAT (JSON):
+{{
+  "questions": [
+    {{
+      "question": "Your question here",
+      "options": [
+        "Option A",
+        "Option B",
+        "Option C",
+        "Option D"
+      ],
+      "correct_answer": "The correct option text",
+      "explanation": "Brief explanation of why this is correct"
+    }}
+  ]
+}}
+
+Return ONLY valid JSON, no other text."""
+        else:
+            return f"""{context}
 
 INSTRUCTIONS:
 Generate {num_questions} viva examination questions following these rules:

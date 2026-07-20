@@ -61,6 +61,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const topicInput = document.getElementById('topic-input');
         const fileInput = document.getElementById('file-input');
         
+        // Get selected mode
+        const modeInput = document.querySelector('input[name="mode"]:checked');
+        const mode = modeInput ? modeInput.value : 'written';
+        
         // Show loading state on button
         startBtn.disabled = true;
         startBtn.innerHTML = '<span class="btn-icon">⚡</span> Starting...';
@@ -77,6 +81,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (fileInput && fileInput.files.length > 0) {
                 formData.append('pdf', fileInput.files[0]);
             }
+            
+            // Add mode
+            formData.append('mode', mode);
             
             const response = await fetch('/api/start', {
                 method: 'POST',

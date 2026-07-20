@@ -18,7 +18,8 @@ class PrepService:
         self,
         topic: str = "",
         pdf_file: Optional[FileStorage] = None,
-        num_questions: int = 5
+        num_questions: int = 5,
+        mode: str = "written"
     ) -> Tuple[Optional[PrepSession], Optional[str]]:
         """
         Validate input and create a session without generating questions yet.
@@ -56,7 +57,8 @@ class PrepService:
             topic=topic if topic else None,
             pdf_filename=pdf_filename,
             pdf_path=pdf_path,
-            num_questions=num_questions
+            num_questions=num_questions,
+            mode=mode
         )
         prep_session.pdf_text = pdf_text
 
@@ -86,18 +88,30 @@ class PrepService:
 
         try:
             num_questions = prep_session.num_questions
+            mode = prep_session.mode
             questions_data = self.ai_service.generate_questions(
                 topic=prep_session.topic,
                 pdf_text=prep_session.pdf_text,
-                num_questions=num_questions
+                num_questions=num_questions,
+                mode=mode
             )
 
             for q_data in questions_data:
-                self.session_service.add_question(
-                    session_id=session_id,
-                    question_text=q_data["question"],
-                    ideal_answer=q_data["ideal_answer"]
-                )
+                if mode == "mcq":
+                    self.session_service.add_question(
+                        session_id=session_id,
+                        question_text=q_data["question"],
+                        ideal_answer="",  # Not used in MCQ mode
+                        options=q_data["options"],
+                        correct_answer=q_data["correct_answer"],
+                        explanation=q_data["explanation"]
+                    )
+                else:
+                    self.session_service.add_question(
+                        session_id=session_id,
+                        question_text=q_data["question"],
+                        ideal_answer=q_data["ideal_answer"]
+                    )
 
             self.session_service.set_generation_status(session_id, "ready")
 

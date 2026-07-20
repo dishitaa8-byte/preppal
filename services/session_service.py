@@ -17,7 +17,8 @@ class SessionService:
         topic: Optional[str] = None,
         pdf_filename: Optional[str] = None,
         pdf_path: Optional[str] = None,
-        num_questions: int = 5
+        num_questions: int = 5,
+        mode: str = "written"
     ) -> PrepSession:
         """
         Create a new preparation session.
@@ -26,6 +27,8 @@ class SessionService:
             topic: Optional topic for text-based session
             pdf_filename: Optional filename of uploaded PDF
             pdf_path: Optional path to uploaded PDF
+            num_questions: Number of questions to generate
+            mode: "written" or "mcq"
             
         Returns:
             Newly created PrepSession object
@@ -36,7 +39,8 @@ class SessionService:
             topic=topic,
             pdf_filename=pdf_filename,
             pdf_path=pdf_path,
-            num_questions=num_questions
+            num_questions=num_questions,
+            mode=mode
         )
         self.sessions[session_id] = session
         return session
@@ -53,7 +57,7 @@ class SessionService:
         """
         return self.sessions.get(session_id)
     
-    def add_question(self, session_id: str, question_text: str, ideal_answer: str) -> Optional[Question]:
+    def add_question(self, session_id: str, question_text: str, ideal_answer: str, options: Optional[list] = None, correct_answer: Optional[str] = None, explanation: Optional[str] = None) -> Optional[Question]:
         """
         Add a question to a session.
         
@@ -61,6 +65,9 @@ class SessionService:
             session_id: ID of the session
             question_text: Text of the question
             ideal_answer: Ideal answer for the question
+            options: List of options for MCQ mode
+            correct_answer: Correct answer for MCQ mode
+            explanation: Explanation for MCQ mode
             
         Returns:
             Created Question object if session found, None otherwise
@@ -73,7 +80,10 @@ class SessionService:
         question = Question(
             id=question_id,
             text=question_text,
-            ideal_answer=ideal_answer
+            ideal_answer=ideal_answer,
+            options=options,
+            correct_answer=correct_answer,
+            explanation=explanation
         )
         session.questions.append(question)
         return question
@@ -122,6 +132,28 @@ class SessionService:
         for answer in session.answers:
             if answer.id == answer_id:
                 answer.evaluation = evaluation
+                return answer
+        return None
+
+    def update_answer_correctness(self, session_id: str, answer_id: str, is_correct: bool) -> Optional[Answer]:
+        """
+        Update correctness of an answer for MCQ mode.
+        
+        Args:
+            session_id: ID of the session
+            answer_id: ID of the answer
+            is_correct: Whether the answer is correct
+            
+        Returns:
+            Updated Answer object if found, None otherwise
+        """
+        session = self.get_session(session_id)
+        if not session:
+            return None
+        
+        for answer in session.answers:
+            if answer.id == answer_id:
+                answer.is_correct = is_correct
                 return answer
         return None
     
