@@ -46,9 +46,27 @@
             <span class="btn-icon">✓</span> Submit Answer
         </button>
 
-        <div class="submitted-notice" id="submitted-notice" style="display: none;">
+        <div class="evaluation-result" id="evaluation-result" style="display: none;">
             <div class="geometric-card">
-                <p class="submitted-text">Answer submitted successfully. Evaluation results coming soon.</p>
+                <div class="evaluation-header">
+                    <h3 class="evaluation-title">Score</h3>
+                    <div class="score-display">
+                        <span class="score-value" id="score-value">0</span>
+                        <span class="score-divider">/</span>
+                        <span class="score-max">5</span>
+                    </div>
+                </div>
+                <div class="evaluation-section">
+                    <h4 class="evaluation-label">Feedback</h4>
+                    <p class="evaluation-text" id="feedback-text"></p>
+                </div>
+                <div class="evaluation-section">
+                    <h4 class="evaluation-label">Ideal Answer</h4>
+                    <p class="evaluation-text ideal-text" id="ideal-answer-text"></p>
+                </div>
+                <button class="start-btn" id="next-question-btn">
+                    <span class="btn-icon">→</span> Next Question
+                </button>
             </div>
         </div>
     </div>

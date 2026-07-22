@@ -111,11 +111,27 @@ Return ONLY valid JSON, no other text."""
 IDEAL ANSWER: {ideal_answer}
 
 EVALUATION CRITERIA:
-- "Good": Covers most key points correctly
-- "Better": Covers all key points with good explanation
-- "Best": Excellent explanation that exceeds expectations
+Evaluate the user's answer on a scale of 0 to 5:
+- 0: Completely incorrect or no answer
+- 1: Minimal understanding, mostly incorrect
+- 2: Basic understanding but missing key points
+- 3: Good understanding, covers most key points
+- 4: Very good understanding, covers all key points well
+- 5: Excellent understanding, exceeds expectations with detailed explanation
 
-Return ONLY one of these three words: Good, Better, or Best"""
+Provide:
+1. A score (integer 0-5)
+2. Concise feedback (2-4 sentences) explaining the score
+3. The ideal answer (as provided above)
+
+RESPONSE FORMAT (JSON):
+{{
+  "score": 4,
+  "feedback": "Your feedback here...",
+  "ideal_answer": "{ideal_answer}"
+}}
+
+Return ONLY valid JSON, no other text."""
     
     def get_ideal_answer_prompt(self, question: str, context: Optional[str] = None) -> str:
         """

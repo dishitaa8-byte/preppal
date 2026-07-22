@@ -106,7 +106,7 @@ class AIService:
         except Exception as e:
             raise Exception(f"AI question generation failed: {str(e)}")
     
-    def evaluate_answer(self, user_answer: str, ideal_answer: str) -> str:
+    def evaluate_answer(self, user_answer: str, ideal_answer: str) -> Dict[str, any]:
         """
         Evaluate a user's answer using NVIDIA API.
         
@@ -115,7 +115,7 @@ class AIService:
             ideal_answer: Ideal answer text
             
         Returns:
-            Evaluation string (Good/Better/Best)
+            Dictionary with score, feedback, and ideal_answer
         """
         if not self.client:
             raise ValueError("NVIDIA API key not configured")
@@ -131,18 +131,45 @@ class AIService:
                     {"role": "user", "content": user_prompt}
                 ],
                 temperature=0.3,
-                max_tokens=64
+                max_tokens=512
             )
             
             result = response.choices[0].message.content.strip()
-            # Normalize result
-            if "Good" in result:
-                return "Good"
-            elif "Better" in result:
-                return "Better"
-            elif "Best" in result:
-                return "Best"
-            return "Good"  # Default
+            
+            # Try to extract JSON
+            try:
+                if "```json" in result:
+                    json_str = result.split("```json")[1].split("```")[0].strip()
+                elif "```" in result:
+                    json_str = result.split("```")[1].strip()
+                else:
+                    json_str = result
+                
+                evaluation_data = json.loads(json_str)
+                
+                # Validate and normalize
+                score = int(evaluation_data.get("score", 3))
+                if score < 0:
+                    score = 0
+                elif score > 5:
+                    score = 5
+                
+                feedback = evaluation_data.get("feedback", "No feedback provided.")
+                returned_ideal = evaluation_data.get("ideal_answer", ideal_answer)
+                
+                return {
+                    "score": score,
+                    "feedback": feedback,
+                    "ideal_answer": returned_ideal
+                }
+            
+            except json.JSONDecodeError:
+                # Fallback if JSON parsing fails
+                return {
+                    "score": 3,
+                    "feedback": "Unable to parse evaluation. Default score assigned.",
+                    "ideal_answer": ideal_answer
+                }
         
         except Exception as e:
             raise Exception(f"AI evaluation failed: {str(e)}")

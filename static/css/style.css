@@ -1554,6 +1554,103 @@ body::after {
     box-shadow: 0 0 10px rgba(46, 204, 113, 0.3);
 }
 
+.evaluation-result {
+    margin-top: 24px;
+}
+
+.evaluation-header {
+    text-align: center;
+    padding: 20px;
+    background: rgba(46, 204, 113, 0.1);
+    border: 1px solid rgba(46, 204, 113, 0.3);
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+.evaluation-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: rgba(245, 245, 245, 0.7);
+    margin: 0 0 12px 0;
+}
+
+.score-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--primary-accent);
+}
+
+.score-value {
+    text-shadow: 0 0 20px rgba(46, 204, 113, 0.5);
+}
+
+.score-divider {
+    color: rgba(245, 245, 245, 0.5);
+    font-size: 32px;
+}
+
+.score-max {
+    color: rgba(245, 245, 245, 0.5);
+    font-size: 32px;
+}
+
+.evaluation-section {
+    padding: 16px;
+    background: rgba(8, 12, 18, 0.3);
+    border-radius: 6px;
+    margin-bottom: 12px;
+}
+
+.evaluation-label {
+    font-family: 'Poppins', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: rgba(245, 245, 245, 0.6);
+    margin: 0 0 8px 0;
+}
+
+.evaluation-text {
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: rgba(245, 245, 245, 0.85);
+    margin: 0;
+}
+
+.evaluation-text.ideal-text {
+    color: var(--primary-accent);
+    font-style: italic;
+}
+
+.score-badge {
+    background: rgba(46, 204, 113, 0.2);
+    color: var(--primary-accent);
+    border: 1px solid rgba(46, 204, 113, 0.4);
+    box-shadow: 0 0 15px rgba(46, 204, 113, 0.2);
+}
+
+.score-text {
+    font-family: 'Poppins', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--primary-accent);
+}
+
+.feedback-text {
+    font-style: italic;
+    color: rgba(245, 245, 245, 0.8);
+}
+
 .action-buttons {
     display: flex;
     gap: 16px;

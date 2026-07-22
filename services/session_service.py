@@ -113,14 +113,15 @@ class SessionService:
         session.answers.append(answer)
         return answer
     
-    def update_answer_evaluation(self, session_id: str, answer_id: str, evaluation: str) -> Optional[Answer]:
+    def update_answer_score_feedback(self, session_id: str, answer_id: str, score: int, feedback: str) -> Optional[Answer]:
         """
-        Update evaluation of an answer.
+        Update score and feedback of an answer for written mode.
         
         Args:
             session_id: ID of the session
             answer_id: ID of the answer
-            evaluation: Evaluation string (Good/Better/Best)
+            score: Score (0-5)
+            feedback: AI feedback text
             
         Returns:
             Updated Answer object if found, None otherwise
@@ -131,7 +132,8 @@ class SessionService:
         
         for answer in session.answers:
             if answer.id == answer_id:
-                answer.evaluation = evaluation
+                answer.score = score
+                answer.feedback = feedback
                 return answer
         return None
 

@@ -135,19 +135,29 @@ def submit_answer(session_id: str):
             # For MCQ, compare with correct answer
             is_correct = (user_answer == question.correct_answer)
             current_app.session_service.update_answer_correctness(session_id, answer.id, is_correct)
+            return jsonify({
+                "status": "success",
+                "answer_id": answer.id
+            }), 200
         else:
             # For written mode, use AI evaluation
-            rating = current_app.evaluation_service.evaluate_answer(
+            evaluation_result = current_app.evaluation_service.evaluate_answer(
                 question=question.text,
                 user_answer=user_answer,
                 ideal_answer=question.ideal_answer
             )
-            current_app.session_service.update_answer_evaluation(session_id, answer.id, rating)
-
-        return jsonify({
-            "status": "success",
-            "answer_id": answer.id
-        }), 200
+            current_app.session_service.update_answer_score_feedback(
+                session_id, answer.id, 
+                evaluation_result["score"], 
+                evaluation_result["feedback"]
+            )
+            return jsonify({
+                "status": "success",
+                "answer_id": answer.id,
+                "score": evaluation_result["score"],
+                "feedback": evaluation_result["feedback"],
+                "ideal_answer": evaluation_result["ideal_answer"]
+            }), 200
 
     except Exception as e:
         return jsonify({"error": f"Failed to submit answer: {str(e)}"}), 500
@@ -241,46 +251,49 @@ def get_session_summary(session_id: str):
                 "questions_review": questions_review
             }), 200
         else:
-            # Written mode summary (existing logic)
-            good_count = 0
-            better_count = 0
-            best_count = 0
+            # Written mode summary with numerical scoring
+            total_score = 0
+            max_possible_score = total_questions * 5
             
             for answer in prep_session.answers:
-                if answer.evaluation == "Good":
-                    good_count += 1
-                elif answer.evaluation == "Better":
-                    better_count += 1
-                elif answer.evaluation == "Best":
-                    best_count += 1
+                if answer.score is not None:
+                    total_score += answer.score
             
-            # Generate overall performance message
-            if best_count >= answered_questions * 0.8:
-                performance_message = "Excellent work."
-            elif best_count + better_count >= answered_questions * 0.7:
-                performance_message = "Great job."
-            elif best_count + better_count + good_count >= answered_questions * 0.5:
-                performance_message = "Good effort."
+            average_score = (total_score / answered_questions) if answered_questions > 0 else 0
+            
+            # Generate performance message based on total score
+            if total_score >= max_possible_score * 0.92:
+                performance_message = "Outstanding"
+            elif total_score >= max_possible_score * 0.76:
+                performance_message = "Excellent"
+            elif total_score >= max_possible_score * 0.60:
+                performance_message = "Good"
+            elif total_score >= max_possible_score * 0.40:
+                performance_message = "Fair"
             else:
-                performance_message = "Keep practicing."
+                performance_message = "Needs Improvement"
             
             # Build question review data
             questions_review = []
             for i, question in enumerate(prep_session.questions):
                 user_answer = None
-                evaluation = None
+                score = None
+                feedback = None
+                ideal_answer = question.ideal_answer
                 for answer in prep_session.answers:
                     if answer.question_id == question.id:
                         user_answer = answer.user_answer
-                        evaluation = answer.evaluation
+                        score = answer.score
+                        feedback = answer.feedback
                         break
                 
                 questions_review.append({
                     "index": i + 1,
                     "question": question.text,
                     "user_answer": user_answer,
-                    "ideal_answer": question.ideal_answer,
-                    "evaluation": evaluation
+                    "score": score,
+                    "feedback": feedback,
+                    "ideal_answer": ideal_answer
                 })
 
             return jsonify({
@@ -288,10 +301,9 @@ def get_session_summary(session_id: str):
                 "topic": prep_session.topic or "PDF-based session",
                 "questions_attempted": answered_questions,
                 "total_questions": total_questions,
-                "good_count": good_count,
-                "better_count": better_count,
-                "best_count": best_count,
-                "completion_percentage": completion_percentage,
+                "total_score": total_score,
+                "max_possible_score": max_possible_score,
+                "average_score": average_score,
                 "performance_message": performance_message,
                 "questions_review": questions_review
             }), 200

@@ -22,7 +22,8 @@ class Answer:
     id: str
     question_id: str
     user_answer: str
-    evaluation: Optional[str] = None  # e.g., "Good", "Better", "Best"
+    score: Optional[int] = None  # 0-5 for written mode
+    feedback: Optional[str] = None  # AI feedback for written mode
     is_correct: Optional[bool] = None  # For MCQ mode
     created_at: datetime = field(default_factory=datetime.now)
 

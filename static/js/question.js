@@ -13,13 +13,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const progressText = document.getElementById('progress-text');
     const progressFill = document.getElementById('progress-fill');
     const charCounter = document.getElementById('char-counter');
-    const submittedNotice = document.getElementById('submitted-notice');
+    const evaluationResult = document.getElementById('evaluation-result');
+    const scoreValue = document.getElementById('score-value');
+    const feedbackText = document.getElementById('feedback-text');
+    const idealAnswerText = document.getElementById('ideal-answer-text');
+    const nextQuestionBtn = document.getElementById('next-question-btn');
     const loading = document.getElementById('loading');
     const loadingText = document.getElementById('loading-text');
 
     loadQuestion();
 
     submitBtn.addEventListener('click', submitAnswer);
+    nextQuestionBtn.addEventListener('click', moveToNextQuestion);
     answerInput.addEventListener('input', updateCharCounter);
 
     async function loadQuestion() {
@@ -65,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         submitBtn.disabled = true;
-        showLoading(true, 'Submitting your answer...');
+        showLoading(true, 'Evaluating your answer...');
 
         try {
             const response = await fetch(`/api/session/${sessionId}/answer`, {
@@ -82,22 +87,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Move to next question
-            const nextResponse = await fetch(`/api/session/${sessionId}/next`, {
-                method: 'POST'
-            });
-            const nextData = await nextResponse.json();
-
-            if (nextData.error) {
-                alert(nextData.error);
-                submitBtn.disabled = false;
-                return;
-            }
-
-            if (nextData.is_complete) {
-                window.location.href = `/prep/${sessionId}/summary`;
+            if (currentMode === 'mcq') {
+                // MCQ mode: move to next question immediately
+                moveToNextQuestion();
             } else {
-                loadQuestion();
+                // Written mode: show evaluation result
+                showEvaluationResult(data);
             }
         } catch (error) {
             console.error('Error submitting answer:', error);
@@ -108,9 +103,50 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    async function moveToNextQuestion() {
+        showLoading(true, 'Loading next question...');
+        try {
+            const nextResponse = await fetch(`/api/session/${sessionId}/next`, {
+                method: 'POST'
+            });
+            const nextData = await nextResponse.json();
+
+            if (nextData.error) {
+                alert(nextData.error);
+                return;
+            }
+
+            if (nextData.is_complete) {
+                window.location.href = `/prep/${sessionId}/summary`;
+            } else {
+                loadQuestion();
+            }
+        } catch (error) {
+            console.error('Error moving to next question:', error);
+            alert('Failed to load next question');
+        } finally {
+            showLoading(false);
+        }
+    }
+
+    function showEvaluationResult(data) {
+        // Hide input elements
+        answerCard.style.display = 'none';
+        submitBtn.style.display = 'none';
+        
+        // Show evaluation result
+        scoreValue.textContent = data.score;
+        feedbackText.textContent = data.feedback;
+        idealAnswerText.textContent = data.ideal_answer;
+        evaluationResult.style.display = 'block';
+    }
+
     function updateUI(question, mode) {
         questionText.textContent = question.text;
         selectedMCQOption = null;
+        
+        // Hide evaluation result
+        evaluationResult.style.display = 'none';
         
         // Show/hide appropriate UI based on mode
         if (mode === 'mcq') {
@@ -131,7 +167,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const progressPercent = ((question.index + 1) / question.total) * 100;
         progressFill.style.width = `${progressPercent}%`;
 
-        submittedNotice.style.display = 'none';
         submitBtn.style.display = 'block';
     }
 
@@ -164,18 +199,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateCharCounter() {
         const count = answerInput.value.length;
         charCounter.textContent = `${count} character${count === 1 ? '' : 's'}`;
-    }
-
-    function showSubmittedState() {
-        if (currentMode === 'mcq') {
-            document.querySelectorAll('.mcq-option').forEach(opt => {
-                opt.style.pointerEvents = 'none';
-            });
-        } else {
-            answerInput.disabled = true;
-        }
-        submitBtn.style.display = 'none';
-        submittedNotice.style.display = 'block';
     }
 
     function showLoading(show, text) {

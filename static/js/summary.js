@@ -4,13 +4,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const performanceMessage = document.getElementById('performance-message');
     const topicDisplay = document.getElementById('topic-display');
     const writtenStats = document.getElementById('written-stats');
-    const writtenEvalStats = document.getElementById('written-eval-stats');
     const mcqStats = document.getElementById('mcq-stats');
+    const totalScore = document.getElementById('total-score');
+    const maxScore = document.getElementById('max-score');
+    const averageScore = document.getElementById('average-score');
     const questionsAttempted = document.getElementById('questions-attempted');
-    const completionPercentage = document.getElementById('completion-percentage');
-    const bestCount = document.getElementById('best-count');
-    const betterCount = document.getElementById('better-count');
-    const goodCount = document.getElementById('good-count');
     const correctCount = document.getElementById('correct-count');
     const incorrectCount = document.getElementById('incorrect-count');
     const accuracyPercentage = document.getElementById('accuracy-percentage');
@@ -62,7 +60,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Show/hide appropriate stats based on mode
         if (mode === 'mcq') {
             writtenStats.style.display = 'none';
-            writtenEvalStats.style.display = 'none';
             mcqStats.style.display = 'grid';
             
             // Update MCQ stats
@@ -72,15 +69,13 @@ document.addEventListener('DOMContentLoaded', () => {
             mcqQuestionsAttempted.textContent = `${data.questions_attempted}/${data.total_questions}`;
         } else {
             writtenStats.style.display = 'grid';
-            writtenEvalStats.style.display = 'flex';
             mcqStats.style.display = 'none';
             
-            // Update written stats
+            // Update written stats with numerical scoring
+            totalScore.textContent = `${data.total_score}`;
+            maxScore.textContent = `${data.max_possible_score}`;
+            averageScore.textContent = `${data.average_score.toFixed(1)}`;
             questionsAttempted.textContent = `${data.questions_attempted}/${data.total_questions}`;
-            completionPercentage.textContent = `${Math.round(data.completion_percentage)}%`;
-            bestCount.textContent = data.best_count;
-            betterCount.textContent = data.better_count;
-            goodCount.textContent = data.good_count;
         }
 
         // Build questions review
@@ -136,13 +131,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
         } else {
-            const badgeClass = item.evaluation ? item.evaluation.toLowerCase() : 'pending';
-            const badgeText = item.evaluation || 'Not Answered';
+            const scoreBadgeClass = item.score !== null ? 'score-badge' : 'pending';
+            const scoreText = item.score !== null ? `${item.score}/5` : 'Not Answered';
 
             card.innerHTML = `
                 <div class="review-header">
                     <span class="question-number">Question ${item.index}</span>
-                    <span class="evaluation-badge ${badgeClass}">${badgeText}</span>
+                    <span class="evaluation-badge ${scoreBadgeClass}">${scoreText}</span>
                 </div>
                 <div class="review-content">
                     <div class="review-section">
@@ -152,6 +147,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="review-section">
                         <h4 class="review-label">Your Answer:</h4>
                         <p class="review-text user-answer">${item.user_answer || 'Not answered'}</p>
+                    </div>
+                    <div class="review-section">
+                        <h4 class="review-label">Score:</h4>
+                        <p class="review-text score-text">${item.score !== null ? item.score : 'N/A'}</p>
+                    </div>
+                    <div class="review-section">
+                        <h4 class="review-label">Feedback:</h4>
+                        <p class="review-text feedback-text">${item.feedback || 'No feedback provided'}</p>
                     </div>
                     <div class="review-section">
                         <h4 class="review-label">Ideal Answer:</h4>
