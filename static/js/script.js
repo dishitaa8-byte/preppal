@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const tagline = document.getElementById('tagline');
     const divider = document.getElementById('divider');
     const actionSection = document.getElementById('action-section');
-    const attachBtn = document.getElementById('attach-btn');
+    const uploadBtn = document.getElementById('upload-btn');
     const fileInput = document.getElementById('file-input');
     const topicInput = document.getElementById('topic-input');
     const fileDisplay = document.getElementById('file-display');
@@ -25,9 +25,9 @@ document.addEventListener('DOMContentLoaded', () => {
         showAllElements(welcomeText, tagline, divider, actionSection);
     }
 
-    // Attach button click handler
-    if (attachBtn && fileInput) {
-        attachBtn.addEventListener('click', () => {
+    // Upload button click handler
+    if (uploadBtn && fileInput) {
+        uploadBtn.addEventListener('click', () => {
             fileInput.click();
         });
     }

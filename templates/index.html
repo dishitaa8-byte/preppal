@@ -30,7 +30,9 @@
         <!-- Combined Input Card -->
         <div class="geometric-card">
             <div class="combined-input-wrapper">
-                <span class="input-icon">📝</span>
+                <button class="upload-btn" id="upload-btn" title="Attach PDF">
+                    �
+                </button>
                 <input 
                     type="text" 
                     class="combined-topic-input" 
@@ -39,10 +41,6 @@
                 >
                 <!-- Hidden File Input -->
                 <input type="file" id="file-input" accept=".pdf" style="display: none;">
-                <!-- Attachment Button -->
-                <button class="attach-btn" id="attach-btn" title="Attach PDF">
-                    📎
-                </button>
             </div>
             <!-- File Display (Hidden by default) -->
             <div class="file-display" id="file-display" style="display: none;">

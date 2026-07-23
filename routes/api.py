@@ -10,7 +10,7 @@ def start_session():
     try:
         topic = request.form.get("topic", "").strip()
         pdf_file = request.files.get("pdf") if "pdf" in request.files else None
-        mode = request.form.get("mode", "written")
+        mode = request.form.get("mode", "written").strip().lower()
 
         # Set num_questions based on mode
         num_questions = 10 if mode == "mcq" else 5
