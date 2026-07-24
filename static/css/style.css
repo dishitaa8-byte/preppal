@@ -502,6 +502,12 @@ body::after {
 .upload-btn:active {
     transform: scale(0.98);
 }
+.upload-btn svg {
+    width: 22px;
+    height: 22px;
+}
+
+
 
 .combined-topic-input {
     flex: 1;
